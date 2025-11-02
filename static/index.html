@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TokenizerLab - Multi-Tokenizer</title>
+    <meta name="description" content="Interactive tokenizer demo supporting BPE, Unigram Language Model, and Subword Regularization." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="container">
+        <div class="header-content">
+          <div class="brand-section">
+            <div class="brand-icon"></div>
+            <div class="brand-text">
+              <h1 class="brand-title">TokenizerLab</h1>
+              <p class="brand-subtitle">Interactive multi-tokenizer demo for DAA Lab</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <div class="container">
+        <div class="content-grid">
+          
+          <section class="card input-section">
+            <div class="card-header">
+              <h2 class="section-title">Input</h2>
+              <div class="button-group">
+                <button id="btnClear" class="btn btn-secondary btn-sm">Clear</button>
+                <button id="btnSample" class="btn btn-primary btn-sm">Sample</button>
+              </div>
+            </div>
+            
+            <div class="card-body">
+              <div class="tokenizer-selector">
+                <label class="control-label" for="tokenizerSelect">Tokenizer Algorithm</label>
+                <select id="tokenizerSelect" class="tokenizer-dropdown">
+                  <option value="bpe">BPE (Byte Pair Encoding)</option>
+                  <option value="unigram">Unigram Language Model</option>
+                  <option value="subword_regularization">Subword Regularization</option>
+                </select>
+                <div id="tokenizerInfo" class="tokenizer-info">
+                  Iteratively merges the most frequent pairs of bytes/characters
+                </div>
+              </div>
+
+              <textarea 
+                id="inputText" 
+                class="text-input" 
+                placeholder="Type or paste your text here..."
+                rows="8"
+              ></textarea>
+
+              <div class="controls-grid">
+                <div class="control-group slider-control" id="mergeControl">
+                  <label class="control-label">Max merges</label>
+                  <div class="slider-wrapper">
+                    <input 
+                      id="mergeRange" 
+                      type="range" 
+                      min="0" 
+                      max="60" 
+                      value="30" 
+                      class="range-slider"
+                      aria-label="Maximum number of merge operations"
+                    />
+                    <span id="mergeValue" class="slider-value">30</span>
+                  </div>
+                </div>
+                
+                <div class="control-group checkbox-control">
+                  <label class="control-label">Options</label>
+                  <div class="checkbox-list">
+                    <label class="checkbox-item">
+                      <input id="chkLower" type="checkbox" class="checkbox-input" />
+                      <span class="checkbox-label">Lowercase</span>
+                    </label>
+                    <label class="checkbox-item" id="wordEndOption">
+                      <input id="chkShowEnds" type="checkbox" class="checkbox-input" checked />
+                      <span class="checkbox-label">Show word end marker</span>
+                    </label>
+                    <label class="checkbox-item" id="samplingOption" style="display: none;">
+                      <input id="chkSampling" type="checkbox" class="checkbox-input" />
+                      <span class="checkbox-label">Use sampling</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card output-section">
+            <div class="card-header">
+              <h2 class="section-title">
+                Tokens
+                <span id="tokenizerBadge" class="tokenizer-badge">BPE</span>
+              </h2>
+              <div class="button-group">
+                <button id="btnCopyTokens" class="btn btn-secondary btn-sm">Copy tokens</button>
+                <button id="btnCopyCount" class="btn btn-primary btn-sm">Copy count</button>
+              </div>
+            </div>
+            
+            <div class="card-body">
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-label">Token count</div>
+                  <div id="statCount" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Vocab size</div>
+                  <div id="statVocab" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Unique tokens</div>
+                  <div id="statUnique" class="stat-value">0</div>
+                </div>
+              </div>
+
+              <div class="tokens-container">
+                <div id="tokensWrap" class="tokens-wrap"></div>
+              </div>
+
+              <div class="vocab-section">
+                <h3 class="vocab-title">Vocabulary</h3>
+                <div id="vocabWrap" class="vocab-wrap"></div>
+              </div>
+            </div>
+          </section>
+          
+        </div>
+      </div>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
