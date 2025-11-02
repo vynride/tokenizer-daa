@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TokenizerLab - Multi-Tokenizer</title>
-    <meta name="description" content="Interactive tokenizer demo supporting BPE, Unigram Language Model, and Subword Regularization." />
+    <meta name="description" content="Interactive tokenizer demo supporting BPE, WordPiece, Unigram, and Subword Regularization." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -43,6 +43,7 @@
                 <label class="control-label" for="tokenizerSelect">Tokenizer Algorithm</label>
                 <select id="tokenizerSelect" class="tokenizer-dropdown">
                   <option value="bpe">BPE (Byte Pair Encoding)</option>
+                  <option value="wordpiece">WordPiece Tokenization</option>
                   <option value="unigram">Unigram Language Model</option>
                   <option value="subword_regularization">Subword Regularization</option>
                 </select>
