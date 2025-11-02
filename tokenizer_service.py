@@ -1,7 +1,7 @@
 import re
 from typing import Dict, List, Any
 from bpe_service import BPEService
-from unigram_tokenizer import UnigramTokenizer
+from wordpiece import WordPieceTokenizer
 from subword_regularization_tokenizer import SubwordRegularizationTokenizer
 
 
@@ -9,13 +9,13 @@ class TokenizerService:
     
     TOKENIZER_TYPES = {
         'bpe': 'Byte Pair Encoding',
-        'unigram': 'Unigram Language Model',
+        'wordpiece': 'Wordpiece Language Model',
         'subword_regularization': 'Subword Regularization'
     }
     
     def __init__(self):
         self.bpe_service = BPEService()
-        self.unigram_tokenizer = None
+        self.wordpiece_tokenizer = None
         self.subword_tokenizer = None
         self.END_MARKER = '</w>'
         
@@ -39,12 +39,13 @@ class TokenizerService:
     ) -> Dict[str, Any]:
         processed_text = self._preprocess_text(text, lowercase)
         
+        # route to the selected tokenizer implementation
         if tokenizer_type == 'bpe':
             return self._encode_with_bpe(
                 processed_text, max_merges, vocab_size, show_word_end
             )
-        elif tokenizer_type == 'unigram':
-            return self._encode_with_unigram(
+        elif tokenizer_type == 'wordpiece':
+            return self._encode_with_wordpiece(
                 processed_text, vocab_size
             )
         elif tokenizer_type == 'subword_regularization':
@@ -73,25 +74,25 @@ class TokenizerService:
         result['tokenizer_name'] = 'Byte Pair Encoding'
         
         return result
-    
-    def _encode_with_unigram(
+    def _encode_with_wordpiece(
         self,
         text: str,
         vocab_size: int
     ) -> Dict[str, Any]:
-        self.unigram_tokenizer = UnigramTokenizer(vocab_size=vocab_size)
-        self.unigram_tokenizer.train(text, num_iterations=8, verbose=False)
-        
-        tokens = self.unigram_tokenizer.tokenize(text)
-        token_ids = self.unigram_tokenizer.encode(text)
-        vocab = self.unigram_tokenizer.get_vocab()
-        
+        # train a fresh WordPiece tokenizer on the provided text and encode
+        self.wordpiece_tokenizer = WordPieceTokenizer(vocab_size=vocab_size)
+        self.wordpiece_tokenizer.train(text, num_iterations=10, verbose=False)
+
+        tokens = self.wordpiece_tokenizer.tokenize(text)
+        token_ids = self.wordpiece_tokenizer.encode(text)
+        vocab = self.wordpiece_tokenizer.get_vocab()
+
         non_whitespace_tokens = [t for t in tokens if not re.match(r'^\s+$', t)]
         unique_tokens = set(non_whitespace_tokens)
-        
+
         original_chars = len(text.replace(' ', '').replace('\n', '').replace('\t', ''))
         compression_ratio = len(non_whitespace_tokens) / original_chars if original_chars > 0 else 0
-        
+
         return {
             'tokens': tokens,
             'token_ids': token_ids,
@@ -104,10 +105,9 @@ class TokenizerService:
                 'compression_ratio': round(compression_ratio, 3),
                 'merge_count': 0
             },
-            'tokenizer_type': 'unigram',
-            'tokenizer_name': 'Unigram Language Model'
+            'tokenizer_type': 'wordpiece',
+            'tokenizer_name': 'WordPiece'
         }
-    
     def _encode_with_subword_reg(
         self,
         text: str,
@@ -164,15 +164,15 @@ class TokenizerService:
             result['tokenizer_type'] = 'bpe'
             return result
             
-        elif tokenizer_type == 'unigram':
-            tokenizer = UnigramTokenizer(vocab_size=vocab_size)
+        elif tokenizer_type == 'wordpiece':
+            tokenizer = WordPieceTokenizer(vocab_size=vocab_size)
             tokenizer.train(text, num_iterations=10, verbose=False)
-            
+
             return {
                 'vocab_size': len(tokenizer.vocab),
                 'num_merges': 0,
-                'message': 'Unigram tokenizer trained successfully',
-                'tokenizer_type': 'unigram'
+                'message': 'WordPiece tokenizer trained successfully',
+                'tokenizer_type': 'wordpiece'
             }
             
         elif tokenizer_type == 'subword_regularization':
@@ -219,7 +219,7 @@ class TokenizerService:
                 'Good for compression',
                 'Used in GPT models'
             ]
-        elif tokenizer_type == 'unigram':
+        elif tokenizer_type == 'wordpiece':
             info['description'] = 'Probabilistic segmentation based on likelihood maximization'
             info['features'] = [
                 'Probabilistic segmentation',

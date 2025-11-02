@@ -38,10 +38,10 @@
       showWordEnd: true,
       showSampling: false
     },
-    'unigram': {
-      name: 'Unigram',
-      description: 'Probabilistic segmentation based on likelihood maximization',
-      showMerges: false,
+    'wordpiece': {
+      name: 'WordPiece',
+      description: 'Greedy longest-match segmentation with iterative pair merging',
+      showMerges: true,
       showWordEnd: false,
       showSampling: false
     },
