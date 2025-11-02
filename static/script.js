@@ -45,13 +45,6 @@
       showWordEnd: false,
       showSampling: false
     },
-    'unigram': {
-      name: 'Unigram',
-      description: 'Probabilistic segmentation based on likelihood maximization',
-      showMerges: false,
-      showWordEnd: false,
-      showSampling: false
-    },
     'subword_regularization': {
       name: 'SubReg',
       description: 'Stochastic segmentation for improved generalization',
